@@ -7,5 +7,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 ARG APP_PORT
-
-CMD uvicorn app.main:app --host 0.0.0.0 --port $APP_PORT
+EXPOSE $APP_PORT
+CMD uvicorn app.main:app --root-path /offices --host 0.0.0.0 --port $APP_PORT

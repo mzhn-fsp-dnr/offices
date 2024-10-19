@@ -19,7 +19,7 @@ def get_application() -> FastAPI:
         allow_headers=conf_settings.ALLOW_HEADERS,
     )
 
-    app.include_router(office.router)
+    app.include_router(office.router )
     return app
 
 

@@ -1,4 +1,7 @@
-version: "4"
+networks:
+  internal:
+  traefik-net:
+    external: true
 
 services:
   mzhn-offices-app:
@@ -16,6 +19,15 @@ services:
       - ${APP_PORT}:${APP_PORT}
     depends_on:
       - offices-pg
+    networks:
+      - traefik-net
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.offices.rule=Host(`api.mzhn.fun`) && PathPrefix(`/offices`)"
+      - "traefik.http.routers.offices.entrypoints=websecure"
+      - "traefik.http.routers.offices.tls.certresolver=myresolver"
+      - "traefik.http.routers.offices.middlewares=corsheaders@file,strip-auth-prefix@file"
 
   offices-pg:
     image: postgres:14.13-alpine3.20
@@ -28,8 +40,8 @@ services:
       POSTGRES_PASSWORD: ${PG_PASS}
     volumes:
       - pg-offices-data:/var/lib/postgresql/data
-    ports:
-      - ${PG_PORT}:5432
+    networks:
+      - internal
 
 volumes:
   pg-offices-data:
