@@ -143,7 +143,7 @@ def unlink_service_from_window_on_office(
     if not service:
         raise HTTPException(status_code=404, detail="Услуга не найдена")
 
-    office_service.unlink_service_from_office(office.id, service.id)
+    office_service.unlink_service_from_office(db_session, office.id, service.id)
 
     return office_service.get(db_session, id)
 
