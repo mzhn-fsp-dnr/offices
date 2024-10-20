@@ -91,13 +91,24 @@ def unlink_service_from_office(db: Session, office_id: str, service_id: str):
     if not office:
         raise HTTPException(status_code=404, detail="Office not found")
 
-    service = (
-        db.query(OfficeService).filter(OfficeService.service_id == service_id).first()
+    services = (
+        db.query(OfficeService)
+        .filter(
+            OfficeService.service_id == service_id, OfficeService.office_id == office_id
+        )
+        .all()
     )
-    if not service:
+    if len(services) == 0:
         raise HTTPException(status_code=404, detail="Office not provide this service")
 
-    office.windows.remove(service)
+    for wr in office.windows:
+        wid = wr.windows_id
+        window = windows_service.get(wid)
+        windows_service.unlink(window.id, service_id)
+
+    for s in services:
+        office.services.remove(s)
+
     db.add(office)
     db.commit()
     db.refresh(office)
@@ -110,16 +121,22 @@ def link_service_to_window_on_office(
 ):
     office = has_service(db, office_id, service_id)
     if not office:
-        raise HTTPException(status_code=404, detail="Office not found")
+        raise HTTPException(status_code=400, detail="Office not provide this service")
 
     windows_service.link(window_id, service_id)
 
 
 def unlink_service_from_window_on_office(
-    db: Session, office_id: str, window_id: str, service_id: str
+    office_id: str, window_id: str, service_id: str
 ):
-    office = has_service(db, office_id, service_id)
+    office = get(office_id)
     if not office:
         raise HTTPException(status_code=404, detail="Office not found")
 
-    windows_service.unlink(window_id, service_id)
+    window = windows_service.get(window_id)
+    if not window:
+        raise HTTPException(status_code=404, detail="Window not found")
+
+    for s in window.services:
+        if s.id == service_id:
+            windows_service.unlink(window_id, service_id)

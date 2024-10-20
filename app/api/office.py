@@ -132,30 +132,24 @@ def link_service_to_window_on_office(
 @router.post("/{id}/unlink")
 def unlink_service_from_window_on_office(
     id: UUID,
-    body: service_schema.ServiceWindowLink,
+    body: service_schema.ServiceWindowUnlink,
     db_session: Session = Depends(get_db),
 ):
     office = office_service.get(db_session, id)
     if not office:
         raise HTTPException(status_code=404, detail="Офис не найден")
 
-    window = windows_service.get(body.window_id)
-    if not window:
-        raise HTTPException(status_code=404, detail="Окно не найдено")
-
     service = services_service.get(body.service_id)
     if not service:
         raise HTTPException(status_code=404, detail="Услуга не найдена")
 
-    office_service.unlink_service_from_window_on_office(
-        db_session, id, window.id, service.id
-    )
+    office_service.unlink_service_from_office(office.id, service.id)
 
     return office_service.get(db_session, id)
 
 
-@router.post("/{id}/unlink/{service_id}")
-def unlink_service_from_window_on_office(
+@router.post("/{id}/unlink/{window_id}/{service_id}")
+def unlink_service_from_window(
     id: UUID,
     service_id: UUID,
     db_session: Session = Depends(get_db),
@@ -164,8 +158,16 @@ def unlink_service_from_window_on_office(
     if not office:
         raise HTTPException(status_code=404, detail="Офис не найден")
 
+    window = windows_service.get(window.window_id)
+    if not window:
+        raise HTTPException(status_code=404, detail="Окно не найдено")
+
     service = services_service.get(service_id)
     if not service:
         raise HTTPException(status_code=404, detail="Услуга не найдена")
 
-    office_service.unlink_service_from_office(db_session, id, service.id)
+    office_service.unlink_service_from_window_on_office(
+        office.id,
+        window.id,
+        service.id,
+    )

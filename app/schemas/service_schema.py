@@ -32,3 +32,10 @@ class ServiceWindowLink(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ServiceWindowUnlink(BaseModel):
+    service_id: UUID4
+
+    class Config:
+        from_attributes = True
