@@ -8,4 +8,4 @@ COPY . .
 
 ARG APP_PORT
 EXPOSE $APP_PORT
-CMD uvicorn app.main:app --root-path /offices --host 0.0.0.0 --port $APP_PORT
+CMD chmod +x ./entrypoint.sh && ./entrypoint.sh $APP_PORT

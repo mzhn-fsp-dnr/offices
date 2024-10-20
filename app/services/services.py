@@ -18,6 +18,10 @@ def create(service: ServiceCreate) -> ServiceSchema:
         )
         print("response code: ", response.status_code)
 
+        if response.status_code != 200:
+            print(f"error({response.status_code}): ", response.text)
+            return None
+
         data = response.json()
         print("created service: ", data)
         result = ServiceSchema(**data)

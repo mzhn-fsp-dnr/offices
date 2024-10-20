@@ -5,8 +5,6 @@ from app.models.base import Base
 from app.db.session import engine
 from app.core.config import conf_settings
 
-Base.metadata.create_all(bind=engine)
-
 
 def get_application() -> FastAPI:
     app = FastAPI()
@@ -19,7 +17,7 @@ def get_application() -> FastAPI:
         allow_headers=conf_settings.ALLOW_HEADERS,
     )
 
-    app.include_router(office.router )
+    app.include_router(office.router)
     return app
 
 
