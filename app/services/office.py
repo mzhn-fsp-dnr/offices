@@ -20,11 +20,11 @@ def get_all(db: Session) -> List[OfficeModel]:
 
 
 def create(db: Session, office: OfficeCreate):
-    db_window = OfficeModel(**office.dict())
-    db.add(db_window)
+    new_office = OfficeModel(**office.as_dict())
+    db.add(new_office)
     db.commit()
-    db.refresh(db_window)
-    return db_window
+    db.refresh(new_office)
+    return new_office
 
 
 def delete(db: Session, id: str):

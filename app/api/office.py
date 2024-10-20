@@ -15,7 +15,7 @@ router = APIRouter(prefix="/offices")
 def create_office(
     office: office_schema.OfficeCreate, db_session: Session = Depends(get_db)
 ):
-    return office_service.create(db_session, office)
+    return office_service.create(db_session, office).as_dict()
 
 
 @router.delete("/{id}")
@@ -27,7 +27,7 @@ def delete_office(id: UUID, db_session: Session = Depends(get_db)):
     return found
 
 
-@router.get("/{id}")
+@router.get("/{id}", response_model=office_schema.OfficeSchema)
 def get_office(id: UUID, db_session: Session = Depends(get_db)):
 
     office = office_service.get(db_session, id)
@@ -54,7 +54,7 @@ def get_office(id: UUID, db_session: Session = Depends(get_db)):
 @router.get("/")
 def get_offices(db_session: Session = Depends(get_db)):
     offices = office_service.get_all(db_session)
-    return {"items": offices, "count": len(offices)}
+    return {"items": [o.as_dict() for o in offices], "count": len(offices)}
 
 
 @router.put("/{id}")
