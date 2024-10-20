@@ -129,14 +129,18 @@ def link_service_to_window_on_office(
 def unlink_service_from_window_on_office(
     db: Session, office_id: str, window_id: str, service_id: str
 ):
+    print("find office: ", office_id)
     office = get(db, office_id)
     if not office:
         raise HTTPException(status_code=404, detail="Office not found")
 
+    print("find window: ", window_id)
     window = windows_service.get(window_id)
     if not window:
         raise HTTPException(status_code=404, detail="Window not found")
 
     for s in window.services:
+        print("window.services: s - ", s)
         if s.id == service_id:
+            print("match: ", s)
             windows_service.unlink(window_id, service_id)
