@@ -151,6 +151,7 @@ def unlink_service_from_window_on_office(
 @router.post("/{id}/unlink/{window_id}/{service_id}")
 def unlink_service_from_window(
     id: UUID,
+    window_id: UUID,
     service_id: UUID,
     db_session: Session = Depends(get_db),
 ):
@@ -158,7 +159,7 @@ def unlink_service_from_window(
     if not office:
         raise HTTPException(status_code=404, detail="Офис не найден")
 
-    window = windows_service.get(window.window_id)
+    window = windows_service.get(window_id)
     if not window:
         raise HTTPException(status_code=404, detail="Окно не найдено")
 
