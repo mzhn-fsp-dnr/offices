@@ -10,7 +10,8 @@ services:
     env_file:
       - .env
     environment:
-      - PG_HOST=offices-pg
+      WAIT_HOSTS: offices-pg:5432
+      PG_HOST: offices-pg
     build:
       context: .
       args:
