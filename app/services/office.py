@@ -92,6 +92,4 @@ def link_service_to_window_on_office(
     if not office:
         raise HTTPException(status_code=404, detail="Office not found")
 
-    window = windows_service.link(window_id, service_id)
-    if not window:
-        raise HTTPException(status_code=401, detail=f"Window {window_id} not found")
+    windows_service.link(window_id, service_id)

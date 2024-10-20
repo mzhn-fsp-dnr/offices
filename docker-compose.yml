@@ -21,8 +21,8 @@ services:
     depends_on:
       - offices-pg
     networks:
-      - traefik-net
       - internal
+    #   - traefik-net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.offices.rule=Host(`api.mzhn.fun`) && PathPrefix(`/offices`)"
@@ -41,8 +41,6 @@ services:
       POSTGRES_PASSWORD: ${PG_PASS}
     volumes:
       - pg-offices-data:/var/lib/postgresql/data
-    ports:
-      - ${PG_PORT}:5432
     networks:
       - internal
 
