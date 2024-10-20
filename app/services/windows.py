@@ -57,3 +57,15 @@ def link(id: str, service_id: str) -> WindowSchema:
         print("ERROR: ", e)
         print("status code: ", response.status_code)
         return None
+
+
+def unlink(id: str, service_id: str) -> WindowSchema:
+    try:
+        response = requests.post(f"{API_URL}/windows/{id}/unlink/{service_id}")
+        data = response.json()
+        print("unlink window response: ", response.status_code, data)
+
+    except requests.RequestException as e:
+        print("ERROR: ", e)
+        print("status code: ", response.status_code)
+        return None

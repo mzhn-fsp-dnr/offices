@@ -85,6 +85,26 @@ def link_window_to_office(db: Session, office_id: str, window: WindowSchema):
     return office
 
 
+def unlink_service_from_office(db: Session, office_id: str, service_id: str):
+
+    office = get(db, office_id)
+    if not office:
+        raise HTTPException(status_code=404, detail="Office not found")
+
+    service = (
+        db.query(OfficeService).filter(OfficeService.service_id == service_id).first()
+    )
+    if not service:
+        raise HTTPException(status_code=404, detail="Office not provide this service")
+
+    office.windows.remove(service)
+    db.add(office)
+    db.commit()
+    db.refresh(office)
+
+    return office
+
+
 def link_service_to_window_on_office(
     db: Session, office_id: str, window_id: str, service_id: str
 ):
@@ -93,3 +113,13 @@ def link_service_to_window_on_office(
         raise HTTPException(status_code=404, detail="Office not found")
 
     windows_service.link(window_id, service_id)
+
+
+def unlink_service_from_window_on_office(
+    db: Session, office_id: str, window_id: str, service_id: str
+):
+    office = has_service(db, office_id, service_id)
+    if not office:
+        raise HTTPException(status_code=404, detail="Office not found")
+
+    windows_service.unlink(window_id, service_id)
